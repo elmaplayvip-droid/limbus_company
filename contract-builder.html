@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор договора</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-section, .preview-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .form-section h2, .preview-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .preview-box {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            min-height: 400px;
+            white-space: pre-wrap;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            overflow-y: auto;
+            max-height: 700px;
+        }
+
+        .preview-box.empty {
+            color: #999;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .input-error {
+            border-color: #e74c3c !important;
+        }
+
+        .success-message {
+            background: #27ae60;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .role-option {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-option:hover {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .role-option.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .contract-type-info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .contract-type-info h3 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .form-section, .button-group, h1 {
+                display: none;
+            }
+            
+            .preview-section {
+                box-shadow: none;
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .preview-box {
+                border: none;
+                max-height: none;
+            }
+        }
+
+        .stats {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Конструктор договора</h1>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="contractCount">0</div>
+                <div class="stat-label">Создано договоров</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="wordCount">0</div>
+                <div class="stat-label">Слов в договоре</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="charCount">0</div>
+                <div class="stat-label">Символов</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="form-section">
+                <h2>📝 Параметры договора</h2>
+                
+                <div class="success-message" id="successMessage">
+                    ✅ Текст договора скопирован в буфер обмена!
+                </div>
+
+                <div class="form-group">
+                    <label for="contractType" class="required">Тип договора</label>
+                    <select id="contractType" required>
+                        <option value="">Выберите тип договора...</option>
+                        <option value="service">Договор оказания услуг</option>
+                        <option value="sale">Договор купли-продажи</option>
+                        <option value="rent">Договор аренды</option>
+                        <option value="contract">Договор подряда</option>
+                    </select>
+                    <div class="error-message" id="contractTypeError">Выберите тип договора</div>
+                </div>
+
+                <div class="contract-type-info" id="contractTypeInfo" style="display: none;">
+                    <h3 id="infoTitle"></h3>
+                    <p id="infoText"></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Роли сторон</label>
+                    <div class="role-selector">
+                        <div class="role-option active" data-party1="Исполнитель" data-party2="Заказчик" onclick="selectRole(this)">
+                            Исполнитель / Заказчик
+                        </div>
+                        <div class="role-option" data-party1="Продавец" data-party2="Покупатель" onclick="selectRole(this)">
+                            Продавец / Покупатель
+                        </div>
+                        <div class="role-option" data-party1="Арендодатель" data-party2="Арендатор" onclick="selectRole(this)">
+                            Арендодатель / Арендатор
+                        </div>
+                        <div class="role-option" data-party1="Подрядчик" data-party2="Заказчик" onclick="selectRole(this)">
+                            Подрядчик / Заказчик
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="party1" class="required">Сторона 1 (<span id="role1Label">Исполнитель</span>)</label>
+                    <input type="text" id="party1" placeholder="Например: Иванов Иван Иванович или ООО «Компания»" required>
+                    <div class="error-message" id="party1Error">Введите данные первой стороны</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="party2" class="required">Сторона 2 (<span id="role2Label">Заказчик</span>)</label>
+                    <input type="text" id="party2" placeholder="Например: Петров Петр Петрович или ООО «Партнер»" required>
+                    <div class="error-message" id="party2Error">Введите данные второй стороны</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject" class="required">Предмет договора</label>
+                    <textarea id="subject" placeholder="Опишите предмет договора (например: выполнение консультационных услуг, передача товара и т.д.)" required></textarea>
+                    <div class="error-message" id="subjectError">Опишите предмет договора</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount" class="required">Сумма договора (руб.)</label>
+                    <input type="number" id="amount" placeholder="Например: 100000" min="0" step="0.01" required>
+                    <div class="error-message" id="amountError">Введите сумму договора</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="date" class="required">Дата заключения</label>
+                    <input type="date" id="date" required>
+                    <div class="error-message" id="dateError">Выберите дату заключения</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="period" class="required">Срок исполнения</label>
+                    <input type="text" id="period" placeholder="Например: 30 календарных дней" required>
+                    <div class="error-message" id="periodError">Укажите срок исполнения</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="city" class="required">Город заключения</label>
+                    <input type="text" id="city" placeholder="Например: Москва" required>
+                    <div class="error-message" id="cityError">Укажите город заключения</div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="includePayment" checked>
+                    <label for="includePayment">Включить раздел об оплате</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="includeResponsibility" checked>
+                    <label for="includeResponsibility">Включить раздел об ответственности</label>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="generateContract()">
+                        <span>📄</span> Сгенерировать договор
+                    </button>
+                    <button class="btn-success" onclick="copyText()">
+                        <span>📋</span> Скопировать текст
+                    </button>
+                    <button class="btn-warning" onclick="exportToTxt()">
+                        <span>💾</span> Экспорт в .txt
+                    </button>
+                    <button class="btn-secondary" onclick="printContract()">
+                        <span>🖨️</span> Печать
+                    </button>
+                    <button class="btn-secondary" onclick="clearForm()">
+                        <span>🗑️</span> Очистить форму
+                    </button>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <h2>👁️ Предпросмотр договора</h2>
+                <div class="preview-box empty" id="previewBox">
+                    Заполните форму и нажмите «Сгенерировать договор» для просмотра текста
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Templates for different contract types
+        const contractTemplates = {
+            service: {
+                title: 'ДОГОВОР ОКАЗАНИЯ УСЛУГ',
+                description: 'Регулирует отношения между исполнителем и заказчиком по оказанию услуг',
+                body: (data) => `
+г. ${data.city}
+${formatDate(data.date)}
+
+${data.party1}, именуем${getEnding(data.party1, 'ый', 'ая')} в дальнейшем «${data.role1}», и 
+${data.party2}, именуем${getEnding(data.party2, 'ый', 'ая')} в дальнейшем «${data.role2}», 
+вместе именуемые «Стороны», заключили настоящий договор о нижеследующем:
+
+1. ПРЕДМЕТ ДОГОВОРА
+
+1.1. ${data.role1} обязуется оказать ${data.subject}, а ${data.role2} обязуется принять и оплатить эти услуги.
+
+1.2. Срок оказания услуг: ${data.period}.
+
+2. СТОИМОСТЬ УСЛУГ И ПОРЯДОК ОПЛАТЫ
+
+2.1. Стоимость услуг по настоящему договору составляет ${formatNumber(data.amount)} ( ${numberToWords(data.amount)} ) рублей.
+
+2.2. Оплата производится ${data.role2} в течение 5 (пяти) банковских дней с момента подписания настоящего договора.
+
+2.3. Оплата производится путем перечисления денежных средств на расчетный счет ${data.role1}.
+
+${data.includeResponsibility ? `
+3. ОТВЕТСТВЕННОСТЬ СТОРОН
+
+3.1. За неисполнение или ненадлежащее исполнение обязательств по настоящему договору Стороны несут ответственность в соответствии с действующим законодательством Российской Федерации.
+
+3.2. ${data.role1} несет ответственность за качество оказываемых услуг.
+
+3.3. ${data.role2} несет ответственность за своевременную оплату услуг.
+` : ''}
+
+4. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ
+
+4.1. Настоящий договор вступает в силу с момента его подписания и действует до полного исполнения Сторонами своих обязательств.
+
+4.2. Все изменения и дополнения к настоящему договору действительны только в письменной форме и должны быть подписаны обеими Сторонами.
+
+4.3. Настоящий договор составлен в двух экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из Сторон.
+
+5. АДРЕСА, РЕКВИЗИТЫ И ПОДПИСИ СТОРОН
+
+${data.role1}:
+${data.party1}
+
+${data.role2}:
+${data.party2}
+`
+            },
+            sale: {
+                title: 'ДОГОВОР КУПЛИ-ПРОДАЖИ',
+                description: 'Регулирует отношения по продаже и покупке товара',
+                body: (data) => `
+г. ${data.city}
+${formatDate(data.date)}
+
+${data.party1}, именуем${getEnding(data.party1, 'ый', 'ая')} в дальнейшем «${data.role1}», и 
+${data.party2}, именуем${getEnding(data.party2, 'ый', 'ая')} в дальнейшем «${data.role2}», 
+вместе именуемые «Стороны», заключили настоящий договор о нижеследующем:
+
+1. ПРЕДМЕТ ДОГОВОРА
+
+1.1. ${data.role1} обязуется передать в собственность ${data.subject}, а ${data.role2} обязуется принять этот товар и оплатить его.
+
+1.2. Срок передачи товара: ${data.period}.
+
+2. ЦЕНА ДОГОВОРА И ПОРЯДОК РАСЧЕТОВ
+
+2.1. Цена товара по настоящему договору составляет ${formatNumber(data.amount)} ( ${numberToWords(data.amount)} ) рублей.
+
+2.2. Оплата производится ${data.role2} в течение 5 (пяти) банковских дней с момента передачи товара.
+
+2.3. Право собственности на товар переходит к ${data.role2} с момента полной оплаты.
+
+${data.includeResponsibility ? `
+3. ОТВЕТСТВЕННОСТЬ СТОРОН
+
+3.1. За неисполнение или ненадлежащее исполнение обязательств по настоящему договору Стороны несут ответственность в соответствии с действующим законодательством Российской Федерации.
+
+3.2. ${data.role1} несет ответственность за качество передаваемого товара.
+
+3.3. ${data.role2} несет ответственность за своевременную оплату товара.
+` : ''}
+
+4. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ
+
+4.1. Настоящий договор вступает в силу с момента его подписания и действует до полного исполнения Сторонами своих обязательств.
+
+4.2. Все изменения и дополнения к настоящему договору действительны только в письменной форме.
+
+4.3. Настоящий договор составлен в двух экземплярах, имеющих одинаковую юридическую силу.
+
+5. АДРЕСА, РЕКВИЗИТЫ И ПОДПИСИ СТОРОН
+
+${data.role1}:
+${data.party1}
+
+${data.role2}:
+${data.party2}
+`
+            },
+            rent: {
+                title: 'ДОГОВОР АРЕНДЫ',
+                description: 'Регулирует отношения по аренде имущества',
+                body: (data) => `
+г. ${data.city}
+${formatDate(data.date)}
+
+${data.party1}, именуем${getEnding(data.party1, 'ый', 'ая')} в дальнейшем «${data.role1}», и 
+${data.party2}, именуем${getEnding(data.party2, 'ый', 'ая')} в дальнейшем «${data.role2}», 
+вместе именуемые «Стороны», заключили настоящий договор о нижеследующем:
+
+1. ПРЕДМЕТ ДОГОВОРА
+
+1.1. ${data.role1} передает во временное владение и пользование ${data.subject}, а ${data.role2} принимает это имущество и обязуется вносить арендную плату.
+
+1.2. Срок аренды: ${data.period}.
+
+2. АРЕНДНАЯ ПЛАТА И ПОРЯДОК РАСЧЕТОВ
+
+2.1. Размер арендной платы составляет ${formatNumber(data.amount)} ( ${numberToWords(data.amount)} ) рублей.
+
+2.2. Арендная плата вносится ${data.role2} ежемесячно не позднее 5-го числа текущего месяца.
+
+2.3. Оплата производится путем перечисления денежных средств на расчетный счет ${data.role1}.
+
+${data.includeResponsibility ? `
+3. ОТВЕТСТВЕННОСТЬ СТОРОН
+
+3.1. За неисполнение или ненадлежащее исполнение обязательств по настоящему договору Стороны несут ответственность в соответствии с действующим законодательством Российской Федерации.
+
+3.2. ${data.role1} несет ответственность за передачу имущества в надлежащем состоянии.
+
+3.3. ${data.role2} несет ответственность за сохранность арендованного имущества и своевременную оплату.
+` : ''}
+
+4. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ
+
+4.1. Настоящий договор вступает в силу с момента его подписания.
+
+4.2. ${data.role2} имеет преимущественное право на заключение договора аренды на новый срок.
+
+4.3. Настоящий договор составлен в двух экземплярах.
+
+5. АДРЕСА, РЕКВИЗИТЫ И ПОДПИСИ СТОРОН
+
+${data.role1}:
+${data.party1}
+
+${data.role2}:
+${data.party2}
+`
+            },
+            contract: {
+                title: 'ДОГОВОР ПОДРЯДА',
+                description: 'Регулирует отношения по выполнению подрядных работ',
+                body: (data) => `
+г. ${data.city}
+${formatDate(data.date)}
+
+${data.party1}, именуем${getEnding(data.party1, 'ый', 'ая')} в дальнейшем «${data.role1}», и 
+${data.party2}, именуем${getEnding(data.party2, 'ый', 'ая')} в дальнейшем «${data.role2}», 
+вместе именуемые «Стороны», заключили настоящий договор о нижеследующем:
+
+1. ПРЕДМЕТ ДОГОВОРА
+
+1.1. ${data.role1} обязуется выполнить ${data.subject}, а ${data.role2} обязуется принять результат работы и оплатить его.
+
+1.2. Срок выполнения работ: ${data.period}.
+
+2. ЦЕНА РАБОТ И ПОРЯДОК РАСЧЕТОВ
+
+2.1. Цена работ по настоящему договору составляет ${formatNumber(data.amount)} ( ${numberToWords(data.amount)} ) рублей.
+
+2.2. Оплата производится ${data.role2} в течение 5 (пяти) банковских дней с момента подписания акта сдачи-приемки работ.
+
+2.3. Оплата производится путем перечисления денежных средств на расчетный счет ${data.role1}.
+
+${data.includeResponsibility ? `
+3. ОТВЕТСТВЕННОСТЬ СТОРОН
+
+3.1. За неисполнение или ненадлежащее исполнение обязательств по настоящему договору Стороны несут ответственность в соответствии с действующим законодательством Российской Федерации.
+
+3.2. ${data.role1} несет ответственность за качество выполняемых работ и соблюдение сроков.
+
+3.3. ${data.role2} несет ответственность за своевременную оплату выполненных работ.
+` : ''}
+
+4. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ
+
+4.1. Настоящий договор вступает в силу с момента его подписания и действует до полного исполнения Сторонами своих обязательств.
+
+4.2. Все изменения и дополнения к настоящему договору действительны только в письменной форме.
+
+4.3. Настоящий договор составлен в двух экземплярах, имеющих одинаковую юридическую силу.
+
+5. АДРЕСА, РЕКВИЗИТЫ И ПОДПИСИ СТОРОН
+
+${data.role1}:
+${data.party1}
+
+${data.role2}:
+${data.party2}
+`
+            }
+        };
+
+        let currentRole1 = 'Исполнитель';
+        let currentRole2 = 'Заказчик';
+        let contractsCreated = 0;
+
+        // Initialize date with today
+        document.getElementById('date').valueAsDate = new Date();
+
+        function selectRole(element) {
+            document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('active'));
+            element.classList.add('active');
+            currentRole1 = element.dataset.party1;
+            currentRole2 = element.dataset.party2;
+            document.getElementById('role1Label').textContent = currentRole1;
+            document.getElementById('role2Label').textContent = currentRole2;
+        }
+
+        function getEnding(party, male, female) {
+            // Simple heuristic: if party name contains typical female indicators
+            if (party.match(/(а$|я$)/i) && !party.match(/(ООО|АО|ИП)/i)) {
+                return female;
+            }
+            return male;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('ru-RU', options);
+        }
+
+        function formatNumber(num) {
+            return parseFloat(num).toLocaleString('ru-RU');
+        }
+
+        function numberToWords(num) {
+            // Simplified number to words conversion
+            const n = parseFloat(num);
+            if (isNaN(n)) return 'ноль';
+            
+            const ones = ['', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'];
+            const teens = ['десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать'];
+            const tens = ['', '', 'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто'];
+            const hundreds = ['', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот'];
+            
+            if (n === 0) return 'ноль';
+            
+            let words = '';
+            let number = Math.floor(n);
+            
+            if (number >= 1000000) {
+                words += hundreds[Math.floor(number / 100000) % 10] + ' ';
+                // Simplified for demo
+            }
+            
+            if (number >= 1000) {
+                words += Math.floor(number / 1000) + ' тысяч ';
+                number %= 1000;
+            }
+            
+            if (number >= 100) {
+                words += hundreds[Math.floor(number / 100)] + ' ';
+                number %= 100;
+            }
+            
+            if (number >= 20) {
+                words += tens[Math.floor(number / 10)] + ' ';
+                number %= 10;
+            } else if (number >= 10) {
+                words += teens[number - 10] + ' ';
+                number = 0;
+            }
+            
+            if (number > 0) {
+                words += ones[number] + ' ';
+            }
+            
+            return words.trim() + ' рублей';
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const fields = ['contractType', 'party1', 'party2', 'subject', 'amount', 'date', 'period', 'city'];
+            
+            fields.forEach(field => {
+                const element = document.getElementById(field);
+                const errorElement = document.getElementById(field + 'Error');
+                
+                if (!element.value.trim()) {
+                    element.classList.add('input-error');
+                    if (errorElement) errorElement.classList.add('show');
+                    isValid = false;
+                } else {
+                    element.classList.remove('input-error');
+                    if (errorElement) errorElement.classList.remove('show');
+                }
+            });
+            
+            return isValid;
+        }
+
+        function generateContract() {
+            if (!validateForm()) {
+                alert('Пожалуйста, заполните все обязательные поля!');
+                return;
+            }
+
+            const contractType = document.getElementById('contractType').value;
+            const template = contractTemplates[contractType];
+            
+            const data = {
+                party1: document.getElementById('party1').value,
+                party2: document.getElementById('party2').value,
+                subject: document.getElementById('subject').value,
+                amount: document.getElementById('amount').value,
+                date: document.getElementById('date').value,
+                period: document.getElementById('period').value,
+                city: document.getElementById('city').value,
+                role1: currentRole1,
+                role2: currentRole2,
+                includePayment: document.getElementById('includePayment').checked,
+                includeResponsibility: document.getElementById('includeResponsibility').checked
+            };
+
+            const contractText = `${template.title}\n\n${template.body(data)}`;
+            
+            const previewBox = document.getElementById('previewBox');
+            previewBox.textContent = contractText;
+            previewBox.classList.remove('empty');
+            
+            contractsCreated++;
+            document.getElementById('contractCount').textContent = contractsCreated;
+            updateStats(contractText);
+            
+            // Show contract info
+            const infoDiv = document.getElementById('contractTypeInfo');
+            document.getElementById('infoTitle').textContent = template.title;
+            document.getElementById('infoText').textContent = template.description;
+            infoDiv.style.display = 'block';
+            
+            // Smooth scroll to preview
+            previewBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function updateStats(text) {
+            const words = text.trim().split(/\s+/).length;
+            const chars = text.length;
+            
+            document.getElementById('wordCount').textContent = words;
+            document.getElementById('charCount').textContent = chars;
+        }
+
+        function copyText() {
+            const previewBox = document.getElementById('previewBox');
+            if (previewBox.classList.contains('empty')) {
+                alert('Сначала сгенерируйте договор!');
+                return;
+            }
+            
+            navigator.clipboard.writeText(previewBox.textContent).then(() => {
+                const successMsg = document.getElementById('successMessage');
+                successMsg.classList.add('show');
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                }, 3000);
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = previewBox.textContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const successMsg = document.getElementById('successMessage');
+                successMsg.classList.add('show');
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                }, 3000);
+            });
+        }
+
+        function exportToTxt() {
+            const previewBox = document.getElementById('previewBox');
+            if (previewBox.classList.contains('empty')) {
+                alert('Сначала сгенерируйте договор!');
+                return;
+            }
+            
+            const text = previewBox.textContent;
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Договор_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function printContract() {
+            const previewBox = document.getElementById('previewBox');
+            if (previewBox.classList.contains('empty')) {
+                alert('Сначала сгенерируйте договор!');
+                return;
+            }
+            window.print();
+        }
+
+        function clearForm() {
+            if (confirm('Вы уверены, что хотите очистить форму?')) {
+                document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], textarea').forEach(input => {
+                    input.value = '';
+                });
+                document.getElementById('date').valueAsDate = new Date();
+                document.getElementById('previewBox').textContent = 'Заполните форму и нажмите «Сгенерировать договор» для просмотра текста';
+                document.getElementById('previewBox').classList.add('empty');
+                document.getElementById('contractTypeInfo').style.display = 'none';
+                document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+                document.querySelectorAll('.error-message.show').forEach(el => el.classList.remove('show'));
+            }
+        }
+
+        // Auto-save to localStorage
+        window.addEventListener('beforeunload', () => {
+            const formData = {
+                contractType: document.getElementById('contractType').value,
+                party1: document.getElementById('party1').value,
+                party2: document.getElementById('party2').value,
+                subject: document.getElementById('subject').value,
+                amount: document.getElementById('amount').value,
+                date: document.getElementById('date').value,
+                period: document.getElementById('period').value,
+                city: document.getElementById('city').value
+            };
+            localStorage.setItem('contractFormData', JSON.stringify(formData));
+        });
+
+        // Load from localStorage on page load
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('contractFormData');
+            if (saved) {
+                const formData = JSON.parse(saved);
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element && formData[key]) {
+                        element.value = formData[key];
+                    }
+                });
+            }
+        });
+
+        // Real-time validation
+        document.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    this.classList.remove('input-error');
+                    const errorEl = document.getElementById(this.id + 'Error');
+                    if (errorEl) errorEl.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

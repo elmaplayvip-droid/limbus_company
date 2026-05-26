@@ -1,0 +1,1 @@
+Nothing needs to be added to .gitignore since only a single HTML file (contract-builder.html) was added, which is a source file that should be tracked in version control. No build artifacts, dependencies, temporary files, or other ignorable content were detected in the changes.
